@@ -1,33 +1,38 @@
 function printReceipt(inputs) {
-  var tmp = [];
+  var cart = [];
   for (var x = 0; x < inputs.length; x++) {
-    inT(inputs[x], tmp);
+    putInCart(inputs[x], cart);
   }
-  makeStrAndPrint(tmp);
+  makeStrPrint(cart);
 }
-function makeStrAndPrint(tmp) {
+function makeStrPrint(cart) {
   var str = '***<没钱赚商店>收据***\n';
-  var c_al1 = 0;
-  for (var z = 0; z < tmp.length; z++) {
-    c_al1 += tmp[z].count * tmp[z].price;
-    str += '名称：' + tmp[z].name + '，数量：' + tmp[z].count + tmp[z].unit + '，单价：' + tmp[z].price + '(元)，小计：' + (tmp[z].count * tmp[z].price).toFixed(2) + '(元)\n';
+  var payMoney = 0;
+  for (var z = 0; z < cart.length; z++) {
+    payMoney += cart[z].count * cart[z].price;
+    str += '名称：' + cart[z].name + '，数量：' + cart[z].count + cart[z].unit + '，单价：' + cart[z].price + '(元)，小计：' + (cart[z].count * cart[z].price).toFixed(2) + '(元)\n';
   }
   str += '----------------------\n';
-  str += '总计：' + c_al1.toFixed(2) + '(元)\n';
+  str += '总计：' + payMoney.toFixed(2) + '(元)\n';
   str += '**********************';
   console.log(str);
 }
-function inT(iMember, tmp) {
+function putInCart(oneBarcode, cart) {
   var idToGoods = {
     ITEM000000: {name: '可口可乐', unit: '瓶', price: '3.00'},
     ITEM000001: {name: '雪碧', unit: '瓶', price: '3.00'},
     ITEM000004: {name: '电池', unit: '个', price: '2.00'}
   };
-  for (var y = 0; y < tmp.length; y++) {
-    if (idToGoods[iMember].name == tmp[y].name) {
-      tmp[y].count++;
+  for (var y = 0; y < cart.length; y++) {
+    if (idToGoods[oneBarcode].name == cart[y].name) {
+      cart[y].count++;
       return;
     }
   }
-  tmp.push({name: (idToGoods[iMember]).name, unit: idToGoods[iMember].unit, price: idToGoods[iMember].price, count: 1});
+  cart.push({
+    name: idToGoods[oneBarcode].name,
+    unit: idToGoods[oneBarcode].unit,
+    price: idToGoods[oneBarcode].price,
+    count: 1
+  });
 }
