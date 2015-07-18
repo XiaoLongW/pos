@@ -17,12 +17,12 @@ function makeStrPrint(cart) {
   str += '**********************';
   console.log(str);
 }
-function putInCart(oneGood, cart) {
+function putInCart(oneItem, cart) {
   for (var y = 0; y < cart.length; y++) {
-    if (oneGood.name == cart[y].name) {
+    if (oneItem.name == cart[y].name) {
       cart[y].count++;
       return;
     }
   }
-  cart.push({name: oneGood.name, unit: oneGood.unit, price: oneGood.price, count: 1});
+  cart.push({name: oneItem.name, unit: oneItem.unit, price: oneItem.price, count: 1});
 }

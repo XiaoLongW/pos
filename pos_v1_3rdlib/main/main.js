@@ -2,12 +2,11 @@ function printReceipt(inputs) {
   var cart = [];
   var promotionsInCart = [];
   _.forEach(inputs, function (oneOfInputs) {
-    var allItems = loadAllItems();
     var oneOfBuy = oneOfInputs.split('-');
     if (_.findIndex(cart, function (chr) {return chr.barcode == oneOfBuy[0];}) != -1) {
       alreadyBy(oneOfBuy, cart);
     } else {
-      firstBuy(oneOfBuy, cart, allItems);
+      firstBuy(oneOfBuy, cart);
     }
   });
   _.forEach(cart, function (oneOfCart) {
@@ -15,6 +14,7 @@ function printReceipt(inputs) {
   });
   makeStrPrint(cart, promotionsInCart);
 }
+
 function makeStrPrint(cart, promotionsCart) {
   var str = '***<没钱赚商店>收据***\n';
   var allPayMoney = 0;
@@ -34,17 +34,18 @@ function makeStrPrint(cart, promotionsCart) {
   str += '**********************';
   console.log(str);
 }
-function alreadyBy(good, cart) {
-  var index = _.findIndex(cart, function (chr) {return chr.barcode == good[0];});
-  cart[index].payCount = cart[index].relCount += good.length == 1 ? 1 : parseInt(good[1]);
+function alreadyBy(item, cart) {
+  var index = _.findIndex(cart, function (chr) {return chr.barcode == item[0];});
+  cart[index].payCount = cart[index].relCount += item.length == 1 ? 1 : parseInt(item[1]);
 }
-function firstBuy(good, cart, allItems) {
-  var index = _.findIndex(allItems, function (chr) {return chr.barcode == good[0];});
+function firstBuy(item, cart) {
+  var allItems = loadAllItems();
+  var index = _.findIndex(allItems, function (chr) {return chr.barcode == item[0];});
   cart.push({
-    barcode: good[0], name: allItems[index].name,
+    barcode: item[0], name: allItems[index].name,
     unit: allItems[index].unit, price: allItems[index].price,
-    relCount: good.length == 1 ? 1 : parseInt(good[1]),
-    payCount: good.length == 1 ? 1 : parseInt(good[1])
+    relCount: item.length == 1 ? 1 : parseInt(item[1]),
+    payCount: item.length == 1 ? 1 : parseInt(item[1])
   });
 }
 function sureToPro(cartGood, proGoodsCol) {

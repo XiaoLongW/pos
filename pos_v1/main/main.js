@@ -29,25 +29,22 @@ function makeStrPrint(cart, promotionsCart) {
   str += '**********************';
   console.log(str);
 }
-function putInCart(beFound, searchIn) {
+function putInCart(oneItem, cart) {
   var allItems = loadAllItems();
-  var arrBeFound = beFound.split('-');
-  for (var y = 0; y < searchIn.length; y++) {
-    if (arrBeFound[0] == searchIn[y].barcode) {
-      searchIn[y].relCount += arrBeFound.length == 1 ? 1 : parseInt(arrBeFound[1]);
-      searchIn[y].payCount += arrBeFound.length == 1 ? 1 : parseInt(arrBeFound[1]);
+  var arrOneItem = oneItem.split('-');
+  for (var y = 0; y < cart.length; y++) {
+    if (arrOneItem[0] == cart[y].barcode) {
+      cart[y].payCount = cart[y].relCount += arrOneItem.length == 1 ? 1 : parseInt(arrOneItem[1]);
       return;
     }
   }
   for (var e = 0; e < allItems.length; e++) {
-    if (allItems[e].barcode == arrBeFound[0]) {
-      searchIn.push({
-        barcode: arrBeFound[0],
-        name: allItems[e].name,
-        unit: allItems[e].unit,
-        price: allItems[e].price,
-        relCount: arrBeFound.length == 1 ? 1 : parseInt(arrBeFound[1]),
-        payCount: arrBeFound.length == 1 ? 1 : parseInt(arrBeFound[1])
+    if (allItems[e].barcode == arrOneItem[0]) {
+      cart.push({
+        barcode: arrOneItem[0], name: allItems[e].name,
+        unit: allItems[e].unit, price: allItems[e].price,
+        relCount: arrOneItem.length == 1 ? 1 : parseInt(arrOneItem[1]),
+        payCount: arrOneItem.length == 1 ? 1 : parseInt(arrOneItem[1])
       });
     }
   }
@@ -62,16 +59,12 @@ function sureToPro(cartGood, proGoodsCol) {
     }
   }
   for (var y = 0; y < proBarcodes.length; y++) {
-    if (cartGood.barcode == proBarcodes[y]) {
-      if (cartGood.payCount >= 3) {
-        proGoodsCol.push({
-          nameP: cartGood.name,
-          countP: Math.floor(cartGood.payCount / 3),
-          unitP: cartGood.unit,
-          priceP: cartGood.price
-        });
-        cartGood.payCount -= Math.floor(cartGood.payCount / 3);
-      }
+    if ((cartGood.barcode == proBarcodes[y]) && (cartGood.payCount >= 3)) {
+      proGoodsCol.push({
+        nameP: cartGood.name, countP: Math.floor(cartGood.payCount / 3),
+        unitP: cartGood.unit, priceP: cartGood.price
+      });
+      cartGood.payCount -= Math.floor(cartGood.payCount / 3);
     }
   }
 }
