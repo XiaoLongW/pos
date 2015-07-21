@@ -1,25 +1,26 @@
-function printReceipt(barcodes) {
+function printReceipt(tags) {
   var cartItems = [];
-  barcodes.forEach(function (barcode) {
-    var arrBarcode = barcode.split('-');
-    var itemBarcode = arrBarcode[0];
-    var counts = arrBarcode.length == 1 ? 1 : arrBarcode[1];
+  tags.forEach(function (tag) {
+    var tagArray = tag.split('-');
+    var itemBarcode = tagArray[0];
+    var counts = tagArray.length == 1 ? 1 : tagArray[1];
     var cartItem = findInCart(cartItems, itemBarcode);
     if (cartItem) {
       cartItem.relCount = cartItem.payCount += counts;
     } else {
-      cartItems.push({item: getItem(itemBarcode), relCount: counts, payCount: counts});
+      cartItems.push({item: getItem(itemBarcode),
+                      relCount: counts, payCount: counts});
     }
   });
-  makePro(cartItems);
-  makeStrPrint(cartItems);
+  makePromotion(cartItems);
+  makeReceiptPrint(cartItems);
 }
 
-function getItem(barcode) {
+function getItem(itemBarcode) {
   var allItems = loadAllItems();
   var item;
   allItems.forEach(function (oneItem) {
-    if (oneItem.barcode == barcode) {
+    if (oneItem.barcode == itemBarcode) {
       item = oneItem;
     }
   });
@@ -36,35 +37,60 @@ function findInCart(cartItems, barcode) {
   return cartItem;
 }
 
-function makePro(cartItems) {
-  cartItems.forEach(function (cartitem) {
-    if (findInPros(cartitem.item.barcode) && (cartitem.payCount >= 3)) {
-      cartitem.payCount -= Math.floor(cartitem.payCount / 3);
+function makePromotion(cartItems) {
+  cartItems.forEach(function (cartItem) {
+    if (isPromotion(cartItem.item.barcode)) {
+      cartItem.payCount -= Math.floor(cartItem.payCount / 3);
     }
   });
 }
-function findInPros(barcode) {
-  var bool = false;
-  var proBarcodes = (loadPromotions())[0].barcodes;
-  proBarcodes.forEach(function (proBarcode) {
-    if (barcode == proBarcode) {
-      bool = true;
+
+function isPromotion(itemBarcode) {
+  var isIn = false;
+  var allPromotionBarcodes = getPromotionBarcodes();
+  allPromotionBarcodes.forEach(function (onePromotionBarcode) {
+    if (itemBarcode === onePromotionBarcode) {
+      isIn = true;
     }
   });
-  return bool;
+  return isIn;
 }
-function makeStrPrint(cartItems) {
+
+function getPromotionBarcodes(){
+  var allPromotions=loadPromotions();
+  var allPromotionBarcodes;
+  allPromotions.forEach(function(onePromotion){
+    if(onePromotion.type === 'BUY_TWO_GET_ONE_FREE'){
+      allPromotionBarcodes = onePromotion.barcodes;
+    }
+  })
+  return allPromotionBarcodes;
+}
+
+function makeReceiptPrint(cartItems) {
   var receipt =
     '***<没钱赚商店>收据***\n' +
     getItemsString(cartItems) +
     '----------------------\n' +
     '挥泪赠送商品：\n' +
-    getProString(cartItems) +
+    getPromotionString(cartItems) +
     '----------------------\n' +
     '总计：' + formatPrice(getAmount(cartItems)) + '(元)\n' +
     '节省：' + formatPrice(getSave(cartItems)) + '(元)\n' +
     '**********************';
   console.log(receipt);
+}
+
+function getItemsString(cartItems) {
+  var itemsString = '';
+  cartItems.forEach(function (cartItem) {
+    itemsString +=
+      '名称：' + cartItem.item.name +
+      '，数量：' + cartItem.relCount + cartItem.item.unit +
+      '，单价：' + formatPrice(cartItem.item.price) +
+      '(元)，小计：' + formatPrice(getSubTotal(cartItem.payCount, cartItem.item.price)) + '(元)\n';
+  });
+  return itemsString;
 }
 
 function getSubTotal(count, price) {
@@ -79,18 +105,7 @@ function getAmount(cartItems) {
   return amount;
 }
 
-function getItemsString(cartItems) {
-  var itemsString = '';
-  cartItems.forEach(function (cartItem) {
-    itemsString +=
-      '名称：' + cartItem.item.name +
-      '，数量：' + cartItem.relCount + cartItem.item.unit +
-      '，单价：' + formatPrice(cartItem.item.price) +
-      '(元)，小计：' + formatPrice(getSubTotal(cartItem.payCount, cartItem.item.price)) + '(元)\n';
-  });
-  return itemsString;
-}
-function getProString(cartItems) {
+function getPromotionString(cartItems) {
   var proString = '';
   cartItems.forEach(function (cartItem) {
     if (cartItem.relCount != cartItem.payCount) {
@@ -99,6 +114,7 @@ function getProString(cartItems) {
   });
   return proString;
 }
+
 function getSave(cartItems) {
   var saveMoney = 0;
   cartItems.forEach(function (cartItem) {
@@ -108,7 +124,7 @@ function getSave(cartItems) {
   });
   return saveMoney;
 }
+
 function formatPrice(price) {
   return price.toFixed(2);
 }
-
