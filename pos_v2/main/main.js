@@ -4,7 +4,7 @@ function printReceipt(tags) {
   var cart = new Cart(cartItems);
   cart.getCartItems(tags);
 
-  var pos = new Pos(cart.cartItems);
+  var pos = new Pos(cart);
   pos.makePromotion();
   pos.printReceipt();
 }

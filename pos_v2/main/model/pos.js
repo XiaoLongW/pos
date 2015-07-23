@@ -1,5 +1,5 @@
-function Pos(cartItems) {
-  this.cartItems = cartItems;
+function Pos(cart) {
+  this.cartItems = cart.cartItems;
 }
 
 Pos.prototype.makePromotion = function () {

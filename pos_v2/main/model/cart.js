@@ -16,6 +16,7 @@ Cart.prototype.getCartItems = function (tags) {
       oThis.cartItems.push(newCartItem);
     }
   });
+
   function getItem(itemBarcode) {
     var allItems = loadAllItems();
     var item;
