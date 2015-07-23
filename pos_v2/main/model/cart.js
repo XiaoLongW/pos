@@ -1,6 +1,7 @@
 function Cart(cartItems) {
   this.cartItems = cartItems;
 }
+
 Cart.prototype.getCartItems = function (tags) {
   var oThis = this;
   tags.forEach(function (tag) {
