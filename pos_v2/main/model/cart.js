@@ -1,5 +1,5 @@
-function Cart(cartItems) {
-  this.cartItems = cartItems;
+function Cart() {
+  this.cartItems = [];
 }
 
 Cart.prototype.getCartItems = function (tags) {
