@@ -1,9 +1,11 @@
 function printReceipt(tags) {
-  var cart = new Cart();
-  cart.getCartItems(tags);
+  var promotionCalculator = new PromotionCalculator();
+  var cart = new Cart(promotionCalculator);
 
-  var pos = new Pos(cart);
-  pos.makePromotion();
+  var scanner = new Scanner();
+
+  var pos = new Pos(scanner, cart);
+  pos.scan(tags);
   pos.printReceipt();
 }
 
